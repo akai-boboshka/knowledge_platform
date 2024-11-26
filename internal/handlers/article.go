@@ -145,22 +145,22 @@ func (h *Handler) AddToReadLater(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(idstr)
-	if err != nil {
-		log.Printf("GetArticleByID - strconv.Atoi error:  %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	//id, err := strconv.Atoi(idstr)
+	//if err != nil {
+	//	log.Printf("GetArticleByID - strconv.Atoi error:  %v", err)
+	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	//	return
+	//}
 
-	readLater, err := h.service.AddArticleToReadLater(id)
-	if err != nil {
-		log.Printf("AddArticleToReadLater - h.service.AddArticleToReadLater error:  %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	//readLater, err := h.service.AddArticleToReadLater(id)
+	//if err != nil {
+	//	log.Printf("AddArticleToReadLater - h.service.AddArticleToReadLater error:  %v", err)
+	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	//	return
+	//}
 
-	log.Printf("AddArticleToReadLater - readLater: %v", readLater)
-	c.JSON(http.StatusCreated, gin.H{"data": readLater})
+	//log.Printf("AddArticleToReadLater - readLater: %v", readLater)
+	//c.JSON(http.StatusCreated, gin.H{"data": readLater})
 }
 
 func (h *Handler) GetArticlesFromFavorites(c *gin.Context) {

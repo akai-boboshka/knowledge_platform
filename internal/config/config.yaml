@@ -1,0 +1,10 @@
+server:
+  host: "localhost"
+  port: 5432
+
+database:
+  user: "postgres"
+  password: "Abram17042006@!"
+  name: "article_db"
+  port: 5432
+  host: "localhost"

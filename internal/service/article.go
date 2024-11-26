@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"log"
 	"os"
@@ -109,9 +110,16 @@ func (s *Service) ListArticles() ([]models.Article, error) {
 func (s *Service) FindArticleByID(id int) (*models.Article, error) {
 	article, err := s.Repository.GetArticleByID(id)
 	if err != nil {
+		s.Log.WithFields(logrus.Fields{
+			"id":    id,
+			"error": err.Error(),
+		}).Error("Failed to fetch article")
 		return nil, err
 	}
 	if article == nil {
+		s.Log.WithFields(logrus.Fields{
+			"id": id,
+		}).Warn("Article not found")
 		return nil, fmt.Errorf("Article with ID: %d didn't found", id)
 	}
 
@@ -154,21 +162,21 @@ func (s *Service) RemoveArticle(id int) (int, error) {
 	return s.Repository.DeleteArticle(id)
 }
 
-func (s *Service) AddArticleToReadLater(ID int) (int, error) {
-	_, err := s.Repository.GetArticleFromFavoriteById(ID) // ошибка возвращается в случае если такой записи нету или другие случаи
-	if err != nil {
-		if errors.As(err, &gorm.ErrRecordNotFound) { // проверяем на существование такой записи
-			err := s.Repository.AddToReadLater(ID) // добавляем запись
-			if err != nil {
-				return 0, err
-			}
-			return ID, nil
-		}
-		return 0, err
-	}
-
-	return 0, nil
-}
+//func (s *Service) AddArticleToReadLater(ID int) (int, error) {
+//	_, err := s.Repository.GetArticleFromFavoriteById(ID) // ошибка возвращается в случае если такой записи нету или другие случаи
+//	if err != nil {
+//		if errors.As(err, &gorm.ErrRecordNotFound) { // проверяем на существование такой записи
+//			err := s.Repository.AddToReadLater(&ID) // добавляем запись
+//			if err != nil {
+//				return 0, err
+//			}
+//			return ID, nil
+//		}
+//		return 0, err
+//	}
+//
+//	return 0, nil
+//}
 
 func (s *Service) ListOfFavoritesArticles() ([]models.ReadLater, error) {
 	articles, err := s.Repository.GetListOfFavoritesArticles()

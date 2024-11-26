@@ -15,9 +15,10 @@ func GenerateJWT(user models.User) (string, error) {
 	// Определяем срок действия токена
 	expirationTime := time.Now().Add(15 * time.Minute)
 
-	// Создаем токен с помощью стандарта HMAC и алгоритма подписи
+	//Создаем токен с помощью стандарта HMAC и алгоритма подписи
 	claims := &jwt.MapClaims{
 		"user_id": user.ID,
+		"role_id": user.RoleID,
 		"exp":     expirationTime.Unix(),
 	}
 
