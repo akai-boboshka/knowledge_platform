@@ -54,26 +54,20 @@ func (s *Service) CreateUser(u *models.User) (*models.User, error) {
 	return s.Repository.AddUser(u)
 }
 
-// SignIn функция, которая возвращает JWT токен для авторизованного пользователя.
 func (s *Service) SignIn(u *models.User) (string, error) {
-	// Проверка существования пользователя
 	user, err := s.Repository.GetUserByUsername(u.Username)
 
-	// Если ошибка "record not found", то пользователь не существует
 	if err != nil {
 		if errors.As(err, &ErrRecordNotFound) {
 			return "", fmt.Errorf("User with name %s not found ", u.Username)
 		}
-		// Если другая ошибка, вернуть её
 		return "", err
 	}
 
-	// Проверка пароля пользователя
 	if !utils.CheckPasswordHash(*u.Password, *user.Password) {
 		return "", fmt.Errorf("Incorrect password entered")
 	}
 
-	// Генерация JWT токена для авторизованного пользователя
 	token, err := utils.GenerateJWT(*user)
 	if err != nil {
 		return "", fmt.Errorf("Failed to generate token: %w", err)

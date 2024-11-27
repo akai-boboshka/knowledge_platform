@@ -10,12 +10,10 @@ import (
 // Секретный ключ для подписи токенов
 var jwtSecret = []byte("SecretKeyForSignature")
 
-// GenerateJWT создает новый JWT токен для пользователя
 func GenerateJWT(user models.User) (string, error) {
-	// Определяем срок действия токена
+
 	expirationTime := time.Now().Add(15 * time.Minute)
 
-	//Создаем токен с помощью стандарта HMAC и алгоритма подписи
 	claims := &jwt.MapClaims{
 		"user_id": user.ID,
 		"role_id": user.RoleID,
@@ -34,11 +32,8 @@ func GenerateJWT(user models.User) (string, error) {
 	return tokenString, nil
 }
 
-// ValidateJWT проверяет валидность JWT токена
-func ValidateJWT(tokenString string) (int, error) {
-	// Парсинг и проверка токена
+func ValidateJWT(tokenString string) (userID, roleID int, err error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		// Проверка алгоритма подписи
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
@@ -46,20 +41,20 @@ func ValidateJWT(tokenString string) (int, error) {
 	})
 
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	// Проверка валидности токена и извлечение данных
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		userID := claims["user_id"].(float64)
-		return int(userID), nil
+		roleID := claims["role_id"].(float64)
+		return int(userID), int(roleID), nil
 	}
 
-	return 0, fmt.Errorf("invalid token")
+	return 0, 0, fmt.Errorf("invalid token")
 }
 
 func ExampleV1() {
-	// Пример использования
 	username := models.User{
 		Username: "john_doe",
 	}
@@ -73,12 +68,11 @@ func ExampleV1() {
 
 	fmt.Println("Generated JWT Token:", token)
 
-	// Проверка JWT токена
-	validUsername, err := ValidateJWT(token)
+	validUsername, validRole, err := ValidateJWT(token)
 	if err != nil {
 		fmt.Println("Error validating JWT:", err)
 		return
 	}
 
-	fmt.Println("Validated username from token:", validUsername)
+	fmt.Printf("Validated username from token: and valid role: ", validUsername, validRole)
 }

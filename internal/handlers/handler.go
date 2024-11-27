@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"awesomeProject/internal/handlers/middleware"
 	"awesomeProject/internal/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -30,6 +31,7 @@ func (h *Handler) InitRoutes() {
 	}
 
 	v1 := h.router.Group("/v1")
+	v1.Use(middleware.Authenticate())
 
 	articleGroup := v1.Group("/articles")
 	{
