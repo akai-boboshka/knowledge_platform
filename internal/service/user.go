@@ -35,7 +35,8 @@ func (s *Service) CreateUser(u *models.User) (*models.User, error) {
 
 	userByUsername, err := s.Repository.GetUserByUsername(u.Username)
 	if err != nil && !errors.As(err, &ErrRecordNotFound) {
-		log.Printf("Failed to get user by username: %v", err)
+		//log.Printf("Failed to get user by username: %v", err)
+
 		return nil, err
 	}
 
@@ -64,13 +65,13 @@ func (s *Service) SignIn(u *models.User) (string, error) {
 		return "", err
 	}
 
-	if !utils.CheckPasswordHash(*u.Password, *user.Password) {
-		return "", fmt.Errorf("Incorrect password entered")
-	}
-
 	token, err := utils.GenerateJWT(*user)
 	if err != nil {
 		return "", fmt.Errorf("Failed to generate token: %w", err)
+	}
+	
+	if !utils.CheckPasswordHash(*u.Password, *user.Password) {
+		return "", fmt.Errorf("Incorrect password entered")
 	}
 
 	return token, nil

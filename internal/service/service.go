@@ -11,6 +11,5 @@ type Service struct {
 }
 
 func NewService(r repository.Repository, log *logrus.Logger) *Service {
-
 	return &Service{Repository: r, Log: log}
 }

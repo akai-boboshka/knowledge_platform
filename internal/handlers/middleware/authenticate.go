@@ -13,6 +13,10 @@ func Authenticate() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		}
 
+		if len(authToken) > 7 && authToken[:7] == "Bearer " {
+			authToken = authToken[7:]
+		}
+
 		userID, roleID, err := utils.ValidateJWT(authToken)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})

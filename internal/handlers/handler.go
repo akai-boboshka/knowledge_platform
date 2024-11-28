@@ -12,10 +12,10 @@ type Handler struct {
 	service *service.Service
 }
 
-func NewHandler(router *gin.Engine, s *service.Service) *Handler {
+func NewHandler(router *gin.Engine, service *service.Service) *Handler {
 	return &Handler{
 		router:  router,
-		service: s,
+		service: service,
 	}
 }
 
@@ -43,14 +43,14 @@ func (h *Handler) InitRoutes() {
 		//articleGroup.PUT("", h.AddArticle)
 	}
 
-	userGroup := v1.Group("/users")
-	{
-		userGroup.GET("", h.GetUsers)
-		userGroup.GET("/:id", h.FindUserById)
-		userGroup.DELETE("/delete/:id", h.DeleteUser)
-		userGroup.PUT("/:id", h.UpdateUser)
-		userGroup.POST("/add", h.SignUp)
-	}
+	//userGroup := v1.Group("/users")
+	//{
+	//	userGroup.GET("", h.GetUsers)
+	//	userGroup.GET("/:id", h.FindUserById)
+	//	userGroup.DELETE("/delete/:id", h.DeleteUser)
+	//	userGroup.PUT("/:id", h.UpdateUser)
+	//	userGroup.POST("/add", h.SignUp)
+	//}
 
 	profileGroup := v1.Group("/profiles")
 	{

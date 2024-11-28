@@ -7,7 +7,6 @@ import (
 	"time"
 )
 
-// Секретный ключ для подписи токенов
 var jwtSecret = []byte("SecretKeyForSignature")
 
 func GenerateJWT(user models.User) (string, error) {
@@ -23,7 +22,6 @@ func GenerateJWT(user models.User) (string, error) {
 	// Создание токена с подписью
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	// Подписание токена с использованием секретного ключа
 	tokenString, err := token.SignedString(jwtSecret)
 	if err != nil {
 		return "", err
@@ -44,7 +42,6 @@ func ValidateJWT(tokenString string) (userID, roleID int, err error) {
 		return 0, 0, err
 	}
 
-	// Проверка валидности токена и извлечение данных
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		userID := claims["user_id"].(float64)
 		roleID := claims["role_id"].(float64)
@@ -54,25 +51,25 @@ func ValidateJWT(tokenString string) (userID, roleID int, err error) {
 	return 0, 0, fmt.Errorf("invalid token")
 }
 
-func ExampleV1() {
-	username := models.User{
-		Username: "john_doe",
-	}
-
-	// Создание JWT токена
-	token, err := GenerateJWT(username)
-	if err != nil {
-		fmt.Println("Error generating JWT:", err)
-		return
-	}
-
-	fmt.Println("Generated JWT Token:", token)
-
-	validUsername, validRole, err := ValidateJWT(token)
-	if err != nil {
-		fmt.Println("Error validating JWT:", err)
-		return
-	}
-
-	fmt.Printf("Validated username from token: and valid role: ", validUsername, validRole)
-}
+//func ExampleV1() {
+//	username := models.User{
+//		Username: "john_doe",
+//	}
+//
+//	// Создание JWT токена
+//	token, err := GenerateJWT(username)
+//	if err != nil {
+//		fmt.Println("Error generating JWT:", err)
+//		return
+//	}
+//
+//	fmt.Println("Generated JWT Token:", token)
+//
+//	validUsername, validRole, err := ValidateJWT(token)
+//	if err != nil {
+//		fmt.Println("Error validating JWT:", err)
+//		return
+//	}
+//
+//	fmt.Printf("Validated username from token: and valid role: ", validUsername, validRole)
+//}

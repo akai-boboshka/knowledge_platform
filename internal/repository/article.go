@@ -7,10 +7,12 @@ import (
 )
 
 func (r *Repository) AddArticle(a *models.Article) (*models.Article, error) {
+	r.Log.Info("Start adding the article to the database")
 	result := r.db.Model(&a).Select("title", "articles_text").Create(&a)
 	if result.Error != nil {
 		return nil, result.Error
 	}
+	r.Log.Info("End adding the article to the database")
 	return a, nil
 }
 

@@ -10,7 +10,7 @@ func (r *Repository) AddUser(u *models.User) (*models.User, error) {
 	query := `insert into users (username, email, password) values (?, ?, ?) returning *`
 	err := r.db.Raw(query, u.Username, u.Email, u.Password).Scan(&u).Error
 	if err != nil {
-		log.Printf("SignUp: Failed to add user: %v\n", err)
+		r.Log.Error("Failed to insert user: ", err.Error())
 		return nil, fmt.Errorf("Failed to add user: %v\n", err)
 	}
 
@@ -23,7 +23,7 @@ func (r *Repository) GetUsers() ([]models.User, error) {
 	// select * from users
 	result := r.db.Omit("password").Find(&users)
 	if result.Error != nil {
-		log.Printf("GetUsers: Failed to get users: %v\n", result.Error)
+		r.Log.Error("Failed to get users: ", result.Error)
 		return nil, fmt.Errorf("Failed to get users: %v\n", result.Error)
 	}
 	return users, nil
@@ -37,7 +37,7 @@ func (r *Repository) GetUserByID(id int) (*models.User, error) {
 	query := `select * from users where id = ?;`
 	err := r.db.Raw(query, id).Scan(&user).Error
 	if err != nil {
-		log.Printf("GetUserByID: Failed to get user: %v\n", err)
+		r.Log.Error("Failed to get user: ", err.Error())
 		return nil, fmt.Errorf("Failed to get user: %v\n", err)
 	}
 	return &user, nil
@@ -49,7 +49,7 @@ func (r *Repository) GetUserByUsername(username string) (*models.User, error) {
 	// select * from users where username = 'username'
 	result := r.db.First(&user, "username = ?", username)
 	if result.Error != nil {
-		log.Printf("GetUserByUsername: Failed to get user: %v\n", result.Error)
+		r.Log.Error("Failed to get user: ", result.Error)
 		return nil, fmt.Errorf("Failed to get user: %v\n", result.Error)
 	}
 	return &user, nil
@@ -63,7 +63,7 @@ func (r *Repository) UpdateUser(u *models.User) error {
 		return fmt.Errorf("Failed to update user: %v\n", result.Error)
 	}
 
-	return nil // Return nil user and nil error if not returning updated user
+	return nil
 }
 
 func (r *Repository) DeleteUser(id int) (int, error) {
